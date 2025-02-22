@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "307929763742",
+    "project_id": "pdm-usuarios-b0e67",
+    "storage_bucket": "pdm-usuarios-b0e67.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307929763742:android:8d0434f170846f338cd08f",
+        "android_client_info": {
+          "package_name": "com.example.navegacao1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0o0hAbWmpTM5ynykPVKg0C998BpXNcyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
