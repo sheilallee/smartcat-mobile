@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.navegacao1"
+    namespace = "com.application.smartcat"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.navegacao1"
+        applicationId = "com.application.smartcat"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -74,4 +74,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.kotlinx.datetime)
+
 }
