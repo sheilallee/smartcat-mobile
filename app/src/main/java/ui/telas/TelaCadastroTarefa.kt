@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.application.smartcat.model.dados.Tarefa
 import com.application.smartcat.model.dados.TarefaDAO
-import com.application.smartcat.util.DateVisualTransformation
 import com.application.smartcat.util.formatInstant
 import com.application.smartcat.util.parseDate
 import com.google.firebase.Timestamp
@@ -43,14 +42,11 @@ fun TelaCadastroTarefa(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Estados para título e descrição: se for de edição, preenche com os valores existentes
     var titulo by remember { mutableStateOf(tarefaParaEditar?.titulo ?: "") }
     var descricao by remember { mutableStateOf(tarefaParaEditar?.descricao ?: "") }
-    // Estado para a data selecionada (apenas como String para exibição no formato "dd/MM/yyyy")
     var dataSelecionada by remember {
         mutableStateOf(
             tarefaParaEditar?.data?.let {
-                // Converte o Timestamp para Instant e formata para "dd/MM/yyyy"
                 val instant = Instant.fromEpochSeconds(it.seconds, it.nanoseconds)
                 formatInstant(instant)
             } ?: ""
@@ -123,13 +119,13 @@ fun TelaCadastroTarefa(
                     if (instantData == null) {
                         mensagemErro = "Data inválida. Use o formato dd/MM/yyyy."
                     } else {
-
                         val timestampData = Timestamp(instantData.epochSeconds, 0)
                         val tarefa = Tarefa(
                             id = tarefaParaEditar?.id ?: "",
                             titulo = titulo,
                             descricao = descricao,
-                            data = timestampData
+                            data = timestampData,
+                            usuarioId = "" // Será definido no DAO automaticamente
                         )
                         scope.launch(Dispatchers.IO) {
                             if (tarefaParaEditar == null) {
@@ -167,6 +163,7 @@ fun TelaCadastroTarefa(
         }
     }
 }
+
 
 
 

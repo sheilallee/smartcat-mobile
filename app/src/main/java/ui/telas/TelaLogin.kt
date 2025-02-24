@@ -1,4 +1,5 @@
 package com.application.smartcat.ui.telas
+
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,15 +23,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.application.smartcat.model.dados.UsuarioDAO
+import com.application.smartcat.util.Sessao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-val usuarioDAO: UsuarioDAO = UsuarioDAO()
 
 @Composable
 fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadastroClick: () -> Unit) {
     val context = LocalContext.current
-    var scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
     var nome by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
@@ -39,8 +39,12 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(value = nome, onValueChange = { nome = it }, label = { Text(text = "Nome") })
         Spacer(modifier = Modifier.height(10.dp))
-        OutlinedTextField(value = senha, visualTransformation = PasswordVisualTransformation(),
-            onValueChange = { senha = it }, label = { Text(text = "Senha") })
+        OutlinedTextField(
+            value = senha,
+            visualTransformation = PasswordVisualTransformation(),
+            onValueChange = { senha = it },
+            label = { Text(text = "Senha") }
+        )
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
@@ -49,8 +53,11 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
         ) {
             Button(modifier = Modifier.weight(1f), onClick = {
                 scope.launch(Dispatchers.IO) {
-                    usuarioDAO.buscarPorNome(nome) { usuario ->
+                    // Busca o usuário pelo nome. O objeto retornado conterá o ID do documento graças ao @DocumentId.
+                    UsuarioDAO().buscarPorNome(nome) { usuario ->
                         if (usuario != null && usuario.senha == senha) {
+                            // Armazena o usuário na sessão para uso interno (não visível ao usuário)
+                            Sessao.usuarioAtual = usuario
                             onSigninClick()
                         } else {
                             mensagemErro = "Nome ou senha inválidos!"
@@ -76,4 +83,6 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
         }
     }
 }
+
+
 

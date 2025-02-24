@@ -4,10 +4,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 
-//classe que pega dados do Firestore
 class UsuarioDAO {
-
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     fun buscar(callback: (List<Usuario>) -> Unit) {
         db.collection("usuarios").get()
@@ -21,6 +19,8 @@ class UsuarioDAO {
     }
 
     fun buscarPorNome(nome: String, callback: (Usuario?) -> Unit) {
+        // A consulta retorna o documento que possui o campo nome igual ao informado.
+        // O @DocumentId na classe Usuario faz com que o ID do documento seja automaticamente atribuído ao campo id.
         db.collection("usuarios").whereEqualTo("nome", nome).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
@@ -62,3 +62,7 @@ class UsuarioDAO {
             }
     }
 }
+
+
+
+

@@ -36,10 +36,24 @@ fun TelaPrincipal(
     var mensagemErro by remember { mutableStateOf<String?>(null) }
     var showCadastroModal by remember { mutableStateOf(false) }
     var tarefaSelecionada by remember { mutableStateOf<Tarefa?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         tarefaDAO.buscar { lista ->
             tarefas = lista
+        }
+    }
+
+    // Filtra as tarefas com base na consulta (título, descrição ou data)
+    val tarefasFiltradas = if (searchQuery.isBlank()) {
+        tarefas
+    } else {
+        tarefas.filter { tarefa ->
+            tarefa.titulo.contains(searchQuery, ignoreCase = true) ||
+                    tarefa.descricao.contains(searchQuery, ignoreCase = true) ||
+                    (tarefa.data != null && formatInstant(
+                        Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
+                    ).contains(searchQuery, ignoreCase = true))
         }
     }
 
@@ -57,8 +71,18 @@ fun TelaPrincipal(
             )
         )
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Barra de busca
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Buscar tarefas") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(tarefas) { tarefa ->
+            items(tarefasFiltradas) { tarefa ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -80,7 +104,7 @@ fun TelaPrincipal(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Data: " + if (tarefa.data != null) {
-                                val instant = kotlinx.datetime.Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
+                                val instant = Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
                                 formatInstant(instant)
                             } else "Sem data",
                             style = MaterialTheme.typography.bodySmall
@@ -165,4 +189,8 @@ fun TelaPrincipal(
         )
     }
 }
+
+
+
+
 

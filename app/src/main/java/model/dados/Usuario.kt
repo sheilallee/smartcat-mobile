@@ -1,6 +1,5 @@
 package com.application.smartcat.model.dados
 
-
 import com.google.firebase.firestore.DocumentId
 
 data class Usuario(
@@ -10,3 +9,6 @@ data class Usuario(
     val nome: String = "",
     val senha: String = ""
 )
+
+
+

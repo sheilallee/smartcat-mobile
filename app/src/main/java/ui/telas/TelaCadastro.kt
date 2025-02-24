@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TelaCadastro(modifier: Modifier = Modifier, onCadastroSucesso: () -> Unit, onCancelar: () -> Unit) {
     val context = LocalContext.current
-    var scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
     var nome by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
@@ -44,7 +44,7 @@ fun TelaCadastro(modifier: Modifier = Modifier, onCadastroSucesso: () -> Unit, o
                     if (nome.isNotEmpty() && senha.isNotEmpty()) {
                         scope.launch(Dispatchers.IO) {
                             val usuario = Usuario(nome = nome, senha = senha)
-                            usuarioDAO.adicionar(usuario) { usuarioAdicionado ->
+                            UsuarioDAO().adicionar(usuario) { usuarioAdicionado ->
                                 if (usuarioAdicionado != null) {
                                     onCadastroSucesso()
                                 } else {
@@ -78,6 +78,7 @@ fun TelaCadastro(modifier: Modifier = Modifier, onCadastroSucesso: () -> Unit, o
         }
     }
 }
+
 
 
 

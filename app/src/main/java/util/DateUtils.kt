@@ -15,7 +15,6 @@ fun formatInstant(instant: Instant): String {
 }
 
 fun parseDate(dateString: String): Instant? {
-
     val normalized = dateString.replace("/", "")
     if (normalized.length != 8) return null
     val day = normalized.substring(0, 2).toIntOrNull() ?: return null
@@ -24,3 +23,6 @@ fun parseDate(dateString: String): Instant? {
     return LocalDate(year, month, day)
         .atStartOfDayIn(TimeZone.currentSystemDefault())
 }
+
+
+
