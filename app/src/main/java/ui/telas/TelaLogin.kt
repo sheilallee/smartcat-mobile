@@ -1,15 +1,18 @@
 package com.application.smartcat.ui.telas
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,8 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.application.smartcat.R
 import com.application.smartcat.model.dados.UsuarioDAO
 import com.application.smartcat.util.Sessao
 import kotlinx.coroutines.Dispatchers
@@ -36,27 +42,40 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()) {
-        OutlinedTextField(value = nome, onValueChange = { nome = it }, label = { Text(text = "Nome") })
-        Spacer(modifier = Modifier.height(10.dp))
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.smarcat_logo),
+            contentDescription = "Logo",
+            modifier = Modifier.height(200.dp)
+        )
+        Spacer(modifier = Modifier.height(58.dp))
+        OutlinedTextField(
+            value = nome,
+            onValueChange = { nome = it },
+            label = { Text(text = "Nome") },
+            modifier = Modifier.fillMaxWidth(0.8f)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = senha,
             visualTransformation = PasswordVisualTransformation(),
             onValueChange = { senha = it },
-            label = { Text(text = "Senha") }
+            label = { Text(text = "Senha") },
+            modifier = Modifier.fillMaxWidth(0.8f)
         )
-        Spacer(modifier = Modifier.height(20.dp))
-
+        Spacer(modifier = Modifier.height(24.dp))
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(0.8f)
         ) {
             Button(modifier = Modifier.weight(1f), onClick = {
                 scope.launch(Dispatchers.IO) {
-                    // Busca o usuário pelo nome. O objeto retornado conterá o ID do documento graças ao @DocumentId.
                     UsuarioDAO().buscarPorNome(nome) { usuario ->
                         if (usuario != null && usuario.senha == senha) {
-                            // Armazena o usuário na sessão para uso interno (não visível ao usuário)
                             Sessao.usuarioAtual = usuario
                             onSigninClick()
                         } else {
@@ -65,16 +84,21 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
                     }
                 }
             }) {
-                Text("Entrar")
-            }
-
-            Button(modifier = Modifier.weight(1f), onClick = {
-                onCadastroClick()
-            }) {
-                Text("Cadastrar")
+                Text(text = "Entrar",
+                    fontSize = 18.sp)
             }
         }
-
+        Spacer(modifier = Modifier.height(16.dp))
+        // Texto e TextButton para redirecionar à tela de cadastro
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = "Não possui uma conta?")
+            TextButton(onClick = { onCadastroClick() }) {
+                Text(
+                    text = "Crie uma conta",
+                    fontSize = 18.sp
+                )
+            }
+        }
         mensagemErro?.let {
             LaunchedEffect(it) {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -83,6 +107,3 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
         }
     }
 }
-
-
-
