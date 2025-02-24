@@ -38,6 +38,7 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    // Mantém os campos de login e senha
     var nome by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
@@ -47,19 +48,23 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
         verticalArrangement = Arrangement.Center,
         modifier = modifier.fillMaxSize()
     ) {
+        // Imagem simulando uma logo (smartcat_logo)
         Image(
-            painter = painterResource(id = R.drawable.smarcat_logo),
-            contentDescription = "Logo",
+            painter = painterResource(id = R.drawable.smartcat_logo),
+            contentDescription = "Logo Smartcat",
             modifier = Modifier.height(200.dp)
         )
         Spacer(modifier = Modifier.height(58.dp))
+        // TextField do login
         OutlinedTextField(
             value = nome,
             onValueChange = { nome = it },
             label = { Text(text = "Nome") },
             modifier = Modifier.fillMaxWidth(0.8f)
         )
+        // Espaçamento entre o TextField do login e o TextField da senha
         Spacer(modifier = Modifier.height(16.dp))
+        // TextField da senha
         OutlinedTextField(
             value = senha,
             visualTransformation = PasswordVisualTransformation(),
@@ -68,28 +73,35 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
             modifier = Modifier.fillMaxWidth(0.8f)
         )
         Spacer(modifier = Modifier.height(24.dp))
+        // Row contendo o botão de "Login"
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth(0.8f)
         ) {
+            // Botão de login
             Button(modifier = Modifier.weight(1f), onClick = {
                 scope.launch(Dispatchers.IO) {
+                    // Verifica se o usuário existe e se a senha está correta
                     UsuarioDAO().buscarPorNome(nome) { usuario ->
                         if (usuario != null && usuario.senha == senha) {
                             Sessao.usuarioAtual = usuario
                             onSigninClick()
-                        } else {
+                        }
+                        else {
                             mensagemErro = "Nome ou senha inválidos!"
                         }
                     }
                 }
             }) {
-                Text(text = "Entrar",
-                    fontSize = 18.sp)
+                Text(
+                    text = "Entrar",
+                    fontSize = 18.sp
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        // Texto e TextButton para redirecionar à tela de cadastro
+
+        // TextButton para criar uma conta
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Não possui uma conta?")
             TextButton(onClick = { onCadastroClick() }) {
