@@ -44,14 +44,14 @@ fun TelaPrincipal(
         }
     }
 
-    val searchQueryState = rememberUpdatedState(searchQuery)
+    val barraDePesquisaState = rememberUpdatedState(searchQuery)
 
     val tarefasFiltradas = tarefas.filter { tarefa ->
-        searchQueryState.value.isBlank() || tarefa.titulo.contains(searchQueryState.value, ignoreCase = true) ||
-                tarefa.descricao.contains(searchQueryState.value, ignoreCase = true) ||
+        barraDePesquisaState.value.isBlank() || tarefa.titulo.contains(barraDePesquisaState.value, ignoreCase = true) ||
+                tarefa.descricao.contains(barraDePesquisaState.value, ignoreCase = true) ||
                 (tarefa.data != null && formatInstant(
                     Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
-                ).contains(searchQueryState.value, ignoreCase = true))
+                ).contains(barraDePesquisaState.value, ignoreCase = true))
     }
 
     Column(
@@ -67,50 +67,32 @@ fun TelaPrincipal(
                 color = Color.White
             )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-        // Barra de busca
-//        OutlinedTextField(
-//            value = searchQuery,
-//            onValueChange = { searchQuery = it },
-//            label = { Text("Buscar tarefas") },
-//            modifier = Modifier.fillMaxWidth(),
-//            singleLine = true
-//        )
-//        Spacer(modifier = Modifier.height(16.dp))
-
-        // Barra de busca destacada e filtro aprimorado
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("Buscar por título") },
-            modifier = Modifier
-                .fillMaxWidth()
-                    .background(Color(0xFFD0CFEA), shape = RoundedCornerShape(4.dp)),
-//                    .padding(4.dp),
+//            label = { Text("Filtro") },
+            placeholder = { Text("Filtre por título, descrição ou data", color = Color.Gray) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFFD0CFEA),
                 unfocusedContainerColor = Color(0xFFD0CFEA),
-
-                focusedLabelColor = Color.White,
-
                 focusedTextColor = Color.White,
-                focusedIndicatorColor = Color.White
+                unfocusedTextColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,  // Remove o contorno quando focado
+                unfocusedIndicatorColor = Color.Transparent // Remove o contorno quando não focado
             ),
             singleLine = true
         )
 
+        // Espaçamento entre a barra de pesquisa e a listagem de tarefas
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Atualização do filtro para considerar apenas títulos
-        val tarefasFiltradas = tarefas.filter { tarefa ->
-            searchQuery.isBlank() || tarefa.titulo.contains(searchQuery, ignoreCase = true)
-        }
-
-
-        // Lista de tarefas com LazyColumn dinâmica
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(2.dp) // Espaçamento entre os cards
         ) {
             items(tarefasFiltradas) { tarefa ->
                 TarefaCard(
