@@ -32,28 +32,26 @@ fun TelaPrincipal(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val tarefaDAO = TarefaDAO()
+    val tarefaDAO = remember { TarefaDAO() }
     var tarefas by remember { mutableStateOf<List<Tarefa>>(emptyList()) }
     var showCadastroModal by remember { mutableStateOf(false) }
     var tarefaSelecionada by remember { mutableStateOf<Tarefa?>(null) }
     var searchQuery by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(tarefaDAO) {
         tarefaDAO.buscar { lista ->
             tarefas = lista
         }
     }
 
-    val tarefasFiltradas = if (searchQuery.isBlank()) {
-        tarefas
-    } else {
-        tarefas.filter { tarefa ->
-            tarefa.titulo.contains(searchQuery, ignoreCase = true) ||
-                    tarefa.descricao.contains(searchQuery, ignoreCase = true) ||
-                    (tarefa.data != null && formatInstant(
-                        Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
-                    ).contains(searchQuery, ignoreCase = true))
-        }
+    val searchQueryState = rememberUpdatedState(searchQuery)
+
+    val tarefasFiltradas = tarefas.filter { tarefa ->
+        searchQueryState.value.isBlank() || tarefa.titulo.contains(searchQueryState.value, ignoreCase = true) ||
+                tarefa.descricao.contains(searchQueryState.value, ignoreCase = true) ||
+                (tarefa.data != null && formatInstant(
+                    Instant.fromEpochSeconds(tarefa.data.seconds, tarefa.data.nanoseconds)
+                ).contains(searchQueryState.value, ignoreCase = true))
     }
 
     Column(
@@ -72,13 +70,42 @@ fun TelaPrincipal(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Barra de busca
+//        OutlinedTextField(
+//            value = searchQuery,
+//            onValueChange = { searchQuery = it },
+//            label = { Text("Buscar tarefas") },
+//            modifier = Modifier.fillMaxWidth(),
+//            singleLine = true
+//        )
+//        Spacer(modifier = Modifier.height(16.dp))
+
+        // Barra de busca destacada e filtro aprimorado
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("Buscar tarefas") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Buscar por título") },
+            modifier = Modifier
+                .fillMaxWidth()
+                    .background(Color(0xFFD0CFEA), shape = RoundedCornerShape(4.dp)),
+//                    .padding(4.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color(0xFFD0CFEA),
+                unfocusedContainerColor = Color(0xFFD0CFEA),
+
+                focusedLabelColor = Color.White,
+
+                focusedTextColor = Color.White,
+                focusedIndicatorColor = Color.White
+            ),
+            singleLine = true
         )
-        Spacer(modifier = Modifier.height(16.dp))
+
+
+        // Atualização do filtro para considerar apenas títulos
+        val tarefasFiltradas = tarefas.filter { tarefa ->
+            searchQuery.isBlank() || tarefa.titulo.contains(searchQuery, ignoreCase = true)
+        }
+
 
         // Lista de tarefas com LazyColumn dinâmica
         LazyColumn(
