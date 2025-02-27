@@ -70,7 +70,7 @@ fun TelaPrincipal(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Bem-vindo(a) de volta!\n\nSuas próximas tarefas:",
+                text = "Bem-vindo(a) de volta!",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -90,6 +90,15 @@ fun TelaPrincipal(
                 )
             }
         }
+
+        Text(
+            text = "Suas próximas tarefas:",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            ),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
         OutlinedTextField(
             value = barraDePesquisaConsulta,
