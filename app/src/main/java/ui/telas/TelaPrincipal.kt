@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
 import com.application.smartcat.model.dados.Tarefa
 import com.application.smartcat.model.dados.TarefaDAO
 import com.application.smartcat.util.formatInstant
@@ -62,20 +63,37 @@ fun TelaPrincipal(
             .background(Color(0xFF8E8CCC))
             .padding(16.dp)
     ) {
-        Text(
-            // TODO: Concatenar com o nome do usuário logado
-            text = "Bem-vindo(a) de volta!\n\nSuas próximas tarefas:",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Bem-vindo(a) de volta!\n\nSuas próximas tarefas:",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                ),
+                modifier = Modifier.weight(1f)
             )
-        )
-        Spacer(modifier = Modifier.height(4.dp))
+
+            FloatingActionButton(
+                onClick = { onLogoffClick() },
+                containerColor = Color(0xFFD0CFEA),
+                contentColor = Color.White,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Sair"
+                )
+            }
+        }
 
         OutlinedTextField(
             value = barraDePesquisaConsulta,
             onValueChange = { barraDePesquisaConsulta = it },
-//            label = { Text("Filtro") },
             placeholder = { Text("Filtre por título, descrição ou data", color = Color.Gray) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp),
@@ -84,18 +102,17 @@ fun TelaPrincipal(
                 unfocusedContainerColor = Color(0xFFD0CFEA),
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,  // Remove o contorno quando focado
-                unfocusedIndicatorColor = Color.Transparent // Remove o contorno quando não focado
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             ),
             singleLine = true
         )
 
-        // Espaçamento entre a barra de pesquisa e a listagem de tarefas
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp) // Espaçamento entre os cards
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             items(tarefasFiltradas) { tarefa ->
                 TarefaCard(
@@ -120,7 +137,6 @@ fun TelaPrincipal(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
         FloatingActionButton(
             onClick = {
@@ -135,15 +151,6 @@ fun TelaPrincipal(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Adicionar Tarefa"
             )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        Button(
-            onClick = { onLogoffClick() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Sair")
         }
     }
 
