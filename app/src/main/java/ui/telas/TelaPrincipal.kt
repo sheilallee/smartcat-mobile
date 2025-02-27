@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -126,13 +127,17 @@ fun TelaPrincipal(
                 tarefaSelecionada = null
                 showCadastroModal = true
             },
-            containerColor = Color(0xFF8E8CCC),
+            containerColor = Color(0xFFD0CFEA),
             contentColor = Color.White,
             modifier = Modifier.align(Alignment.End)
         ) {
-            Text("+ Adicionar")
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Adicionar Tarefa"
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
+
 
         Button(
             onClick = { onLogoffClick() },
