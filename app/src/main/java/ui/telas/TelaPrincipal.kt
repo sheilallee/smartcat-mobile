@@ -57,104 +57,111 @@ fun TelaPrincipal(
                 ).contains(barraDePesquisaState.value, ignoreCase = true))
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color(0xFF8E8CCC))
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Bem-vindo(a) de volta!",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
+
+                FloatingActionButton(
+                    onClick = { onLogoffClick() },
+                    containerColor = Color(0xFFD0CFEA),
+                    contentColor = Color.White,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "Sair"
+                    )
+                }
+            }
+
             Text(
-                text = "Bem-vindo(a) de volta!",
+                text = "Suas próximas tarefas:",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            FloatingActionButton(
-                onClick = { onLogoffClick() },
-                containerColor = Color(0xFFD0CFEA),
-                contentColor = Color.White,
-                modifier = Modifier.size(48.dp)
+            OutlinedTextField(
+                value = barraDePesquisaConsulta,
+                onValueChange = { barraDePesquisaConsulta = it },
+                placeholder = { Text("Filtre por título, descrição ou data", color = Color.Gray) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFD0CFEA),
+                    unfocusedContainerColor = Color(0xFFD0CFEA),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Sair"
-                )
-            }
-        }
-
-        Text(
-            text = "Suas próximas tarefas:",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            ),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        OutlinedTextField(
-            value = barraDePesquisaConsulta,
-            onValueChange = { barraDePesquisaConsulta = it },
-            placeholder = { Text("Filtre por título, descrição ou data", color = Color.Gray) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFD0CFEA),
-                unfocusedContainerColor = Color(0xFFD0CFEA),
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            items(tarefasFiltradas) { tarefa ->
-                TarefaCard(
-                    tarefa = tarefa,
-                    onEdit = {
-                        tarefaSelecionada = tarefa
-                        showCadastroModal = true
-                    },
-                    onDelete = {
-                        scope.launch(Dispatchers.IO) {
-                            tarefaDAO.remover(tarefa.id) { sucesso ->
-                                scope.launch(Dispatchers.Main) {
-                                    if (sucesso) {
-                                        tarefas = tarefas.filter { it.id != tarefa.id }
-                                    } else {
-                                        Toast.makeText(context, "Erro ao remover tarefa", Toast.LENGTH_SHORT).show()
+                items(tarefasFiltradas) { tarefa ->
+                    TarefaCard(
+                        tarefa = tarefa,
+                        onEdit = {
+                            tarefaSelecionada = tarefa
+                            showCadastroModal = true
+                        },
+                        onDelete = {
+                            scope.launch(Dispatchers.IO) {
+                                tarefaDAO.remover(tarefa.id) { sucesso ->
+                                    scope.launch(Dispatchers.Main) {
+                                        if (sucesso) {
+                                            tarefas = tarefas.filter { it.id != tarefa.id }
+                                        } else {
+                                            Toast.makeText(context, "Erro ao remover tarefa", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
 
+        // FAB flutuando sobre a lista
         FloatingActionButton(
             onClick = {
                 tarefaSelecionada = null
                 showCadastroModal = true
             },
-            containerColor = Color(0xFFD0CFEA),
+            containerColor = Color(0xFF785FAF),
             contentColor = Color.White,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)  // espaçamento do canto da tela
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
