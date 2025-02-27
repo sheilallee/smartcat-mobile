@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.application.smartcat.model.dados.Tarefa
@@ -36,7 +37,7 @@ fun TelaPrincipal(
     var tarefas by remember { mutableStateOf<List<Tarefa>>(emptyList()) }
     var showCadastroModal by remember { mutableStateOf(false) }
     var tarefaSelecionada by remember { mutableStateOf<Tarefa?>(null) }
-    var searchQuery by remember { mutableStateOf("") }
+    var barraDePesquisaConsulta by remember { mutableStateOf("") }
 
     LaunchedEffect(tarefaDAO) {
         tarefaDAO.buscar { lista ->
@@ -44,7 +45,7 @@ fun TelaPrincipal(
         }
     }
 
-    val barraDePesquisaState = rememberUpdatedState(searchQuery)
+    val barraDePesquisaState = rememberUpdatedState(barraDePesquisaConsulta)
 
     val tarefasFiltradas = tarefas.filter { tarefa ->
         barraDePesquisaState.value.isBlank() || tarefa.titulo.contains(barraDePesquisaState.value, ignoreCase = true) ||
@@ -61,6 +62,7 @@ fun TelaPrincipal(
             .padding(16.dp)
     ) {
         Text(
+            // TODO: Concatenar com o nome do usuário logado
             text = "Bem-vindo(a) de volta!\n\nSuas próximas tarefas:",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
@@ -70,8 +72,8 @@ fun TelaPrincipal(
         Spacer(modifier = Modifier.height(4.dp))
 
         OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
+            value = barraDePesquisaConsulta,
+            onValueChange = { barraDePesquisaConsulta = it },
 //            label = { Text("Filtro") },
             placeholder = { Text("Filtre por título, descrição ou data", color = Color.Gray) },
             modifier = Modifier.fillMaxWidth(),
@@ -144,7 +146,12 @@ fun TelaPrincipal(
         AlertDialog(
             onDismissRequest = { showCadastroModal = false },
             title = {
-                Text(text = if (tarefaSelecionada == null) "Adicionar Tarefa" else "Alterar Tarefa")
+                Text(
+                    text = if (tarefaSelecionada == null) "Adicionar Tarefa" else "Editar Tarefa",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center
+                )
             },
             text = {
                 TelaCadastroTarefa(

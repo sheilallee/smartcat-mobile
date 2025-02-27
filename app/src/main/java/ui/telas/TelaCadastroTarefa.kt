@@ -109,52 +109,65 @@ fun TelaCadastroTarefa(
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
+
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Button(onClick = {
-                if (titulo.isNotEmpty() && descricao.isNotEmpty() && dataSelecionada.isNotEmpty()) {
-                    val instantData = parseDate(dataSelecionada)
-                    if (instantData == null) {
-                        mensagemErro = "Data inválida. Use o formato dd/MM/yyyy."
-                    } else {
-                        val timestampData = Timestamp(instantData.epochSeconds, 0)
-                        val tarefa = Tarefa(
-                            id = tarefaParaEditar?.id ?: "",
-                            titulo = titulo,
-                            descricao = descricao,
-                            data = timestampData,
-                            usuarioId = "" // Será definido no DAO automaticamente
-                        )
-                        scope.launch(Dispatchers.IO) {
-                            if (tarefaParaEditar == null) {
-                                tarefaDAO.adicionar(tarefa) { sucesso ->
-                                    scope.launch(Dispatchers.Main) {
-                                        if (sucesso) onCadastroSucesso()
-                                        else mensagemErro = "Falha ao adicionar tarefa."
+            Button(
+                onClick = {
+                    if (titulo.isNotEmpty() && descricao.isNotEmpty() && dataSelecionada.isNotEmpty()) {
+                        val instantData = parseDate(dataSelecionada)
+                        if (instantData == null) {
+                            mensagemErro = "Data inválida. Use o formato dd/MM/yyyy."
+                        } else {
+                            val timestampData = Timestamp(instantData.epochSeconds, 0)
+                            val tarefa = Tarefa(
+                                id = tarefaParaEditar?.id ?: "",
+                                titulo = titulo,
+                                descricao = descricao,
+                                data = timestampData,
+                                usuarioId = "" // Será definido no DAO automaticamente
+                            )
+                            scope.launch(Dispatchers.IO) {
+                                if (tarefaParaEditar == null) {
+                                    tarefaDAO.adicionar(tarefa) { sucesso ->
+                                        scope.launch(Dispatchers.Main) {
+                                            if (sucesso) onCadastroSucesso()
+                                            else mensagemErro = "Falha ao adicionar tarefa."
+                                        }
                                     }
-                                }
-                            } else {
-                                tarefaDAO.alterar(tarefaParaEditar.id, tarefa) { sucesso ->
-                                    scope.launch(Dispatchers.Main) {
-                                        if (sucesso) onCadastroSucesso()
-                                        else mensagemErro = "Falha ao atualizar tarefa."
+                                } else {
+                                    tarefaDAO.alterar(tarefaParaEditar.id, tarefa) { sucesso ->
+                                        scope.launch(Dispatchers.Main) {
+                                            if (sucesso) onCadastroSucesso()
+                                            else mensagemErro = "Falha ao atualizar tarefa."
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        mensagemErro = "Todos os campos são obrigatórios."
                     }
-                } else {
-                    mensagemErro = "Todos os campos são obrigatórios."
-                }
-            }) {
+                },
+                modifier = Modifier
+                    .weight(1f)
+            ) {
                 Text(text = if (tarefaParaEditar == null) "Adicionar" else "Salvar")
             }
-            Button(onClick = { onCancelar() }) {
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                onClick = { onCancelar() },
+                modifier = Modifier
+                    .weight(1f) // Ocupa a outra metade da largura
+            ) {
                 Text("Cancelar")
             }
         }
+
         mensagemErro?.let { erro ->
             LaunchedEffect(erro) {
                 Toast.makeText(context, erro, Toast.LENGTH_SHORT).show()
@@ -163,7 +176,3 @@ fun TelaCadastroTarefa(
         }
     }
 }
-
-
-
-
