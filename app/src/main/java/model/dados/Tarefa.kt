@@ -10,9 +10,3 @@ data class Tarefa(
     val data: Timestamp? = null,
     val usuarioId: String = ""
 )
-
-
-
-
-
-

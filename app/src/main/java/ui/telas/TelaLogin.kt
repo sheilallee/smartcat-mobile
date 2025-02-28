@@ -34,7 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadastroClick: () -> Unit) {
+fun TelaLogin(modifier: Modifier = Modifier, onLogarClick: () -> Unit, onCadastroClick: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -85,7 +85,7 @@ fun TelaLogin(modifier: Modifier = Modifier, onSigninClick: () -> Unit, onCadast
                     UsuarioDAO().buscarPorNome(nome) { usuario ->
                         if (usuario != null && usuario.senha == senha) {
                             Sessao.usuarioAtual = usuario
-                            onSigninClick()
+                            onLogarClick()
                         }
                         else {
                             mensagemErro = "Nome ou senha inválidos!"

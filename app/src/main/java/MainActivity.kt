@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.application.smartcat.ui.telas.TelaCadastro
-import com.application.smartcat.ui.telas.TelaCadastroTarefa
 import com.application.smartcat.ui.telas.TelaLogin
 import com.application.smartcat.ui.telas.TelaPrincipal
 import com.application.smartcat.ui.theme.SmartCatTheme
@@ -42,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         composable("login") {
                             TelaLogin(
                                 modifier = androidx.compose.ui.Modifier.padding(innerPadding),
-                                onSigninClick = { navController.navigate("principal") },
+                                onLogarClick = { navController.navigate("principal") },
                                 onCadastroClick = { navController.navigate("cadastro") }
                             )
                         }
@@ -69,6 +68,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-

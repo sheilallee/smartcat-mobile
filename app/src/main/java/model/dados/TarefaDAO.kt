@@ -8,14 +8,15 @@ class TarefaDAO {
     private val db = FirebaseFirestore.getInstance()
 
     fun buscar(callback: (List<Tarefa>) -> Unit) {
-        val currentUser = Sessao.usuarioAtual
-        if (currentUser == null) {
+        val usuarioAtual = Sessao.usuarioAtual
+        // Verifica se o usuário está logado
+        if (usuarioAtual == null) {
             callback(emptyList())
             return
         }
         // Busca apenas as tarefas que possuem o usuárioId do usuário logado
         db.collection("tarefas")
-            .whereEqualTo("usuarioId", currentUser.id)
+            .whereEqualTo("usuarioId", usuarioAtual.id)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val tarefas = querySnapshot.documents.map { doc ->
@@ -58,25 +59,30 @@ class TarefaDAO {
     }
 
     fun adicionar(tarefa: Tarefa, callback: (Boolean) -> Unit) {
-        val currentUser = Sessao.usuarioAtual
-        if (currentUser == null) {
+        val usuarioAtual = Sessao.usuarioAtual
+        // Verifica se o usuário está logado
+        if (usuarioAtual == null) {
             callback(false)
             return
         }
-        // Garante que a tarefa receba o ID do usuário logado, sem que o usuário veja esse campo
-        val tarefaComUsuario = tarefa.copy(usuarioId = currentUser.id)
+        // Adiciona o id do usuario ao objeto tarefa antes de adicioná-lo ao Firestore
+        val tarefaComUsuario = tarefa.copy(usuarioId = usuarioAtual.id)
         db.collection("tarefas").add(tarefaComUsuario)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
     fun alterar(id: String, tarefa: Tarefa, callback: (Boolean) -> Unit) {
-        val currentUser = Sessao.usuarioAtual
-        if (currentUser == null) {
+        // Verifica se o usuário está logado
+        val usuarioAtual = Sessao.usuarioAtual
+        if (usuarioAtual == null) {
+            // Se o usuário não estiver logado, não é possível alterar a tarefa
             callback(false)
             return
         }
-        val tarefaComUsuario = tarefa.copy(usuarioId = currentUser.id)
+
+        // Adiciona o id do usuario ao objeto tarefa antes de adicioná-lo ao Firestore
+        val tarefaComUsuario = tarefa.copy(usuarioId = usuarioAtual.id)
         db.collection("tarefas").document(id).set(tarefaComUsuario)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
@@ -88,7 +94,3 @@ class TarefaDAO {
             .addOnFailureListener { callback(false) }
     }
 }
-
-
-
-

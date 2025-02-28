@@ -19,8 +19,7 @@ class UsuarioDAO {
     }
 
     fun buscarPorNome(nome: String, callback: (Usuario?) -> Unit) {
-        // A consulta retorna o documento que possui o campo nome igual ao informado.
-        // O @DocumentId na classe Usuario faz com que o ID do documento seja automaticamente atribuído ao campo id.
+        // A consulta retorna o documento que possui o campo 'nome' igual ao informado
         db.collection("usuarios").whereEqualTo("nome", nome).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
