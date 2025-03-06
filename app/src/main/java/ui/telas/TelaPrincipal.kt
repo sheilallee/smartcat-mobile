@@ -1,6 +1,8 @@
 package com.application.smartcat.ui.telas
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TelaPrincipal(
     modifier: Modifier = Modifier,
