@@ -8,5 +8,9 @@ data class Tarefa(
     val titulo: String = "",
     val descricao: String = "",
     val data: Timestamp? = null,
-    val usuarioId: String = ""
+    val usuarioId: String = "",
+    val status: Int = 1 // 1 = A Fazer, 2 = Concluído
 )
+
+
+

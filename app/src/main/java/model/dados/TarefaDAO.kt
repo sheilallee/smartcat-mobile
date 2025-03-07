@@ -14,7 +14,7 @@ class TarefaDAO {
             callback(emptyList())
             return
         }
-        // Busca apenas as tarefas que possuem o usuárioId do usuário logado
+        // Adiciona o id do usuario ao objeto tarefa antes de adicioná-lo ao Firestore
         db.collection("tarefas")
             .whereEqualTo("usuarioId", usuarioAtual.id)
             .get()
@@ -26,7 +26,8 @@ class TarefaDAO {
                         titulo = doc.getString("titulo") ?: "",
                         descricao = doc.getString("descricao") ?: "",
                         data = dataTimestamp,
-                        usuarioId = doc.getString("usuarioId") ?: ""
+                        usuarioId = doc.getString("usuarioId") ?: "",
+                        status = (doc.get("status") as? Long)?.toInt() ?: 1 // Incluindo status
                     )
                 }
                 callback(tarefas)
@@ -46,7 +47,8 @@ class TarefaDAO {
                         titulo = doc.getString("titulo") ?: "",
                         descricao = doc.getString("descricao") ?: "",
                         data = dataTimestamp,
-                        usuarioId = doc.getString("usuarioId") ?: ""
+                        usuarioId = doc.getString("usuarioId") ?: "",
+                        status = (doc.get("status") as? Long)?.toInt() ?: 1 // Incluindo status
                     )
                     callback(tarefa)
                 } else {
@@ -60,30 +62,30 @@ class TarefaDAO {
 
     fun adicionar(tarefa: Tarefa, callback: (Boolean) -> Unit) {
         val usuarioAtual = Sessao.usuarioAtual
-        // Verifica se o usuário está logado
         if (usuarioAtual == null) {
             callback(false)
             return
         }
-        // Adiciona o id do usuario ao objeto tarefa antes de adicioná-lo ao Firestore
-        val tarefaComUsuario = tarefa.copy(usuarioId = usuarioAtual.id)
+        val tarefaComUsuario = tarefa.copy(usuarioId = usuarioAtual.id, status = 1) // Inicia com status 1
         db.collection("tarefas").add(tarefaComUsuario)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
     fun alterar(id: String, tarefa: Tarefa, callback: (Boolean) -> Unit) {
-        // Verifica se o usuário está logado
         val usuarioAtual = Sessao.usuarioAtual
         if (usuarioAtual == null) {
-            // Se o usuário não estiver logado, não é possível alterar a tarefa
             callback(false)
             return
         }
-
-        // Adiciona o id do usuario ao objeto tarefa antes de adicioná-lo ao Firestore
         val tarefaComUsuario = tarefa.copy(usuarioId = usuarioAtual.id)
         db.collection("tarefas").document(id).set(tarefaComUsuario)
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
+
+    fun moverTarefa(id: String, novoStatus: Int, callback: (Boolean) -> Unit) {
+        db.collection("tarefas").document(id).update("status", novoStatus)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
@@ -94,3 +96,5 @@ class TarefaDAO {
             .addOnFailureListener { callback(false) }
     }
 }
+
+
